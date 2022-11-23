@@ -2,37 +2,33 @@
     "log": {
         "loglevel": "warning"
     },
+    "routing": {
+        "domainStrategy": "AsIs",
+        "rules": [
+            {
+                "type": "field",
+                "ip": [
+                    "geoip:private"
+                ],
+                "outboundTag": "block"
+            }
+        ]
+    },
     "inbounds": [
         {
             "port": 8080,
             "protocol": "vmess",
-            "allocate": {
-                "strategy": "always"
-            },
             "settings": {
                 "clients": [
                     {
                         "id": "",
                         "email": "1@admin"
                     }
-                ],
-                "disableInsecureEncryption": true
+                ]
             },
             "streamSettings": {
-                "network": "ws",
-                "wsSettings": {
-                    "connectionReuse": true,
-                    "path": ""
-                },
+                "network": "tcp",
                 "security": "tls",
-                "tlsSettings": {
-                    "certificates": [
-                        {
-                            "certificateFile": "",
-                            "keyFile": ""
-                        }
-                    ]
-                },
                 "tcpSettings": {
                     "header": {
                         "type": "http",
@@ -53,13 +49,26 @@
                             }
                         }
                     }
+                },
+                "tlsSettings": {
+                    "certificates": [
+                        {
+                            "certificateFile": "",
+                            "keyFile": ""
+                        }
+                    ]
                 }
             }
         }
     ],
     "outbounds": [
         {
-            "protocol": "freedom"
+            "protocol": "freedom",
+            "tag": "direct"
+        },
+        {
+            "protocol": "blackhole",
+            "tag": "block"
         }
     ]
 }
